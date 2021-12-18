@@ -116,11 +116,11 @@ router.put('/edit/:id',async (req,res)=>{
         var e= Date.parse(interview.endTime);
         var st=Date.parse(startTime);
         var et=Date.parse(endTime);
-        console.log(e, s,st,et)
+       // console.log(e, s,st,et)
 
         if((e>st && s<=st) || (e>et &&  s<et) || (st<=s && et>=e ) )
         {
-            console.log(interview)
+           // console.log(interview)
             var p1=interview.participants;
             var p2=participants;
             
@@ -132,7 +132,7 @@ router.put('/edit/:id',async (req,res)=>{
                     if(p1[i]. toString() === p2[j]. toString())
                     {
                         c=true;
-                        console.log("shreyaa")
+                      //  console.log("shreyaa")
                         
                         break;
                     }
@@ -178,7 +178,7 @@ router.delete('/delete/:id',(req,res)=>{
             return res.json({ error: "Some technical error in deleting Interview" });
         }
         else{
-            console.log("Deleted : ", docs);
+        //    console.log("Deleted : ", docs);
             return res.json({ message: "Interview Sucessfully Deleted" });
         }})
 })
@@ -191,7 +191,7 @@ router.get("/mail/:id",async (req,res)=>{
     
     let participants=[];
    const interview= await Interview.findById(id).exec()
-   console.log("abccc" ,interview)
+  // console.log("abccc" ,interview)
    
     participants=interview.participants;
     let allMails="";
