@@ -20,8 +20,11 @@ Admin can notify the participants via mail.
 
 
 1. **Home Page**: The home page contains a list of all upcoming interviews. Here admin can edit and delete the interview and notify participants via email.
+
 ![alt text](https://www.linkpicture.com/q/Screenshot-1378.png "Home Page")
 
 2. **Interview Scheduling Page**: This page contains the form to schedule an interview between participants with proper error messages when no of participants is less than 2, start time greater than end time if the same participant is scheduled in another interview at the same time, etc.
+
 ![alt text](https://www.linkpicture.com/q/Screenshot-1379.png "Schedule an Interview")
+
 ![alt text](https://www.linkpicture.com/q/Screenshot-1380.png "Schedule an Interview")
