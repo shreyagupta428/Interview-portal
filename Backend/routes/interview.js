@@ -196,16 +196,6 @@ router.get("/mail/:id",async (req,res)=>{
     participants=interview.participants;
     let allMails="";
 
-//    participants.forEach((async oneparti=>{
-//       let iid=oneparti;
-//       const user= await User.findById(iid).exec();
-//       console.log(typeof(user.email))
-//       console.log(user.email)
-//       allMails+=user.email;
-//       console.log("allMails ", allMails)
-//       allMails+=", ";
-//     }))
-
    const p = await User.find({ '_id': { $in: participants } });
    p.map((async oneparti=>{
             allMails+=oneparti.email;
@@ -217,7 +207,7 @@ router.get("/mail/:id",async (req,res)=>{
         service: 'gmail',
         auth: {
           user: "shreyaguptaapril@gmail.com", // generated ethereal user
-          pass: "shreyaapril28", // generated ethereal password
+          pass: password, // generated ethereal password
         },
       });
     
@@ -242,56 +232,6 @@ router.get("/mail/:id",async (req,res)=>{
             
     
 })
-
-
-// router.get('/:id/:email',async (req,res)=>{
-//     const id=req.params.id;
-//     const email=req.params.email;
-//     var idofuser=-1;
-//    // console.log(id, email)
-//    const user = await User.find({email:email})
-//    console.log(user)
-
-//    if(user.length==0)
-//    return res.json({error:"user is not present"})
-//    else
-//    idofuser=user[0]._id;
-
-//     console.log(idofuser)
-//    var interviewfound=false;
-   
-   
-//    var interview;
-//    try{interview= await Interview.findById(id)}
-//    catch{res.json({error:"interview is not present"})}
-
-
-//    console.log("a")
-//     console.log(interview)
-//    console.log("a")
-//    if(!interview || interview.length==0 )
-//    return res.json({error:"interview is not present"})
-//    else{
-//     var participant=interview.participants;
-//     console.log("parti",participant)
-//     participant.map((user)=>{
-//      if(user._id.toString()===idofuser.toString())
-//      {  console.log(user._id)
-//          interviewfound=true;  
-//      }
-//     })
-//    }
-     
-
-//    if(interviewfound)
-//    return res.json({interview})
-//    else
-//    return res.json({error:"Interview not found with given user"})
-
-
-// })
-
-
 
 
 
