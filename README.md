@@ -28,3 +28,7 @@ Admin can notify the participants via mail.
 ![alt text](https://www.linkpicture.com/q/Screenshot-1379.png "Schedule an Interview")
 
 ![alt text](https://www.linkpicture.com/q/Screenshot-1380.png "Schedule an Interview")
+
+3. **Edit Interview Page**
+
+![alt text](https://www.linkpicture.com/q/Screenshot-1381.png "Edit an Interview")
