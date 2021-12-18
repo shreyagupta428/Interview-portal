@@ -1,84 +1,192 @@
 import React,{useState,useEffect} from 'react';
 import axios from "axios";
-import { Link } from "react-router-dom";
-import Moment from "react-moment";
+// import { Link } from "react-router-dom";
+// import Moment from "react-moment";
 import { useParams } from "react-router-dom";
+ import moment from "moment";
+import Select from "react-select";
+import { useNavigate } from "react-router-dom";
+import M from "materialize-css";
+//import { useLocation } from "react-router-dom";
 
-const EditInterview=()=>{
-    const { iid } = useParams();
+
+function Edit(){
+    const {id}=useParams()
+    
+    const [interview,setInterview]=useState([]);
     const [date, setDate] = useState(new Date());
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
     const [candidates, setCandidates] = useState([{}]);
-    const [interviews,setInterviews]=useState([]);
+    const [candidateEmail, setCandidateEmail] = useState([]);
+    const history = useNavigate();
 
-    useEffect(()=>{
-        axios
-      .get("interview/upcoming", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-          console.log(res.data.allInterviews)
-          setInterviews(res.data.allInterviews);
-          for(let i=0;i<res.data.allInterviews.length;i++)
-          {
-              if(res.data.allInterviews[i]._id===iid)
-              {  
-                  console.log(res.data.allInterviews[i].startTime)
-                setStartTime(res.data.allInterviews[i].startTime);
-                setEndTime(res.data.allInterviews[i].endTime);
-                setDate(res.data.allInterviews[i].startTime)
-              }
-          }
-      })
-      .catch((err) => console.log(err));
-    },[])
+ useEffect(()=>{
+   axios.get(`/interview/${id}`,{
+    headers: {
+      "Content-Type": "application/json",
+    }
+   })
+   .then ((res)=>{
+     console.log("params", id)
+     console.log("interview " , res.data)
+     setInterview(res.data)
+   })
+   .catch((err) => console.log(err));
+
+
+
+ },[]);
+  
+  useEffect(()=>{
+     
+
+   let participants = [];
+
+   axios
+     .get('http://localhost:5000/user/all', {
+       headers: {
+         "Content-Type": "application/json",
+       },
+     })
+     .then((res) => {
+       
+         console.log(res.data.allUsers)
+         res.data.allUsers.map(user=>{
+           participants = [
+             ...participants,
+             { value:user._id, label:user.email },
+           ];
+           console.log("participant ",participants)
+         })
+ 
+       
+       setCandidates(participants);
+      
+       console.log(candidates)
+     })
+     .catch((err) => {console.log("eeeeeeerrrrrrrrrrrrrrrr", err) });
+
+  },[])
+
+  var iid=interview._id;
+  
+
     
     
-   const handleSubmit=()=>{
+    
+      const handleSubmit = (e) => {
 
-   }
-    return (
-            <div>
-            <div>
-            <div className="card" style={{width:"70%",marginLeft:170,padding:15}}>
-            <form onSubmit={handleSubmit}>
-               <h3 style={{justifyContent:"center"}}>Edit Interview</h3>
-               <label>Select Date </label>
-               <input
-                    type="date"
-                    required
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-               />
-               <label>Set Start Time </label>
-               <input 
-                   type="time"
-                   required
-                   value={startTime}
-                   onChange={(e) => setStartTime(e.target.value)} 
-               />
-               <label>Set End Time</label>
-                <input
-                   type="time"
-                   value={endTime}
-                   required
-                   onChange={(e) => setEndTime(e.target.value)}
-                />
-           <label>Select Participants</label>
-            <br></br>
-            <br></br>
-            <br></br>
-            <input type="submit" value="Submit" />
-            </form>
-            </div>
-            </div> 
-            </div>
+        e.preventDefault();
+        const stime = moment(
+          `${date} ${startTime}`,
+          "YYYY-MM-DD HH:mm:ss"
+        ).format();
+        const etime = moment(`${date} ${endTime}`, "YYYY-MM-DD HH:mm:ss").format();
+  
+        if (Date.parse(stime) < Date.now()) {
+          
+          M.toast({
+            html: "Start time should be greater than current time",
+            classes: "#c62828 red darken-3",
+          });
+          
+        } else if (Date.parse(stime) >= Date.parse(etime)) {
+          M.toast({
+            html: "Start date-time has to be less than end date-time",
+            classes: "#c62828 red darken-3",
+          });
          
+        } else {
+  
+          let ids = [];
+            
+          if (candidateEmail.length > 0)
+            candidateEmail.map((val) => {
+              ids = [...ids, val.value];
+            });
+       
+          axios.put(`http://localhost:5000/interview/edit/${iid}`, {
+            participants: ids,
+              startTime: stime,
+              endTime: etime,
+          })
+          .then((res) => {
+            if (res.data.error) {
+              M.toast({
+                html: res.data.error,
+                classes: "#c62828 red darken-3",
+              });
+            } else {
+              M.toast({
+                html: res.data.message,
+                classes: "#43a047 green darken-1",
+              });
+              history("/");
+            }
+          })
+          .catch((err) => console.log(err));
+  
+        }
+      };
+   
+  
+    const handleCandidateEmailChange = (option) => {
+      // console.log(options);
+      setCandidateEmail(option);
+    };
+
+    return (
+          
+      <div>
+            
+      <div className="card" style={{width:"70%",marginLeft:170,padding:15}}>
+      <form 
+      onSubmit={e=>handleSubmit(e)}
+      >
+         <h3 style={{justifyContent:"center"}}>Edit an interview</h3>
+         <label>Select Date </label>
+         <input
+              type="date"
+              required
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+         />
+         <label>Set Start Time </label>
+         <input 
+             type="time"
+             required
+             value={startTime}
+             onChange={(e) => setStartTime(e.target.value)} 
+         />
+         <label>Set End Time</label>
+          <input
+             type="time"
+             value={endTime}
+             required
+             onChange={(e) => setEndTime(e.target.value)}
+          />
+          <div >
+          <label>Select Participants</label>
+    <Select
+      // className={}
+      value={candidateEmail}
+      onChange={handleCandidateEmailChange}
+      options={candidates}
+      isSearchable={true}
+      placeholder={"Add email"}
+      isMulti={true}
+    />
+  </div>
+    
+<br></br>
+<br></br>
+<br></br>
+<input type="submit" value="Schedule an Interview" style={{color:"blue"}}/>
+</form>
+      </div>
+  </div>
     )
 }
 
-
-export default EditInterview;
+export default Edit;

@@ -5,15 +5,16 @@ let User=require('../models/user')
 
 //create a user
 router.post('/create',(req,res)=>{
-    console.log(req.body.name);
+
     const { name, email, phone, isAdmin} = req.body;
+    
   if (!email || !phone || !name)
     return res.json({ error: "Please add all the fields" });
   else {
     User.findOne({ email: email })
       .then((savedUser) => {
         if (savedUser)
-          return res.json({ error: "User already exits with that email" });
+          return res.json({ error: "User already exist with that email" });
         else {
           
             const user = new User({
@@ -43,7 +44,7 @@ router.get('/all',(req,res)=>{
     .populate("user","_id email")
     .then(allUsers=>{
         console.log(allUsers)
-        res.json({allUsers})
+        return res.json({allUsers})
     })
     .catch(err=>console.log(err))
 
